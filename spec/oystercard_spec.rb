@@ -28,4 +28,27 @@ describe Oystercard do
       expect(oystercard.balance).to eq(0)
     end
   end
+
+  describe 'touch in/out' do
+    describe '#in_journey?' do
+      it 'should return false if not in journey' do
+        expect(oystercard.in_journey?).to eq(false)
+      end
+    end
+
+    describe '#touch_in' do
+      it 'should return true if touched in' do
+        oystercard.touch_in
+        expect(oystercard).to be_in_journey
+      end
+    end
+
+    describe '#touch_out' do
+      it 'should return false if touched out' do
+        oystercard.touch_in
+        oystercard.touch_out
+        expect(oystercard).not_to be_in_journey
+      end
+    end
+  end
 end
