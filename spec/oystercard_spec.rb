@@ -14,5 +14,10 @@ describe Oystercard do
       oystercard.top_up(1)
       expect(oystercard.balance).to eq(1)
     end
+    it 'should raise an error if card limit (£90) is reached' do
+      card_limit = Oystercard::CARD_LIMIT
+      error_message = 'Card limit exceeded'
+      expect { oystercard.top_up(card_limit + 1) }.to raise_error(error_message)
+    end
   end
 end
