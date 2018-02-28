@@ -3,15 +3,20 @@ require 'oystercard'
 describe Oystercard do
   subject(:oystercard) { described_class.new }
 
+  before(:each) do
+    oystercard.top_up(1)
+    oystercard.touch_in
+  end
+
   describe 'balance' do
     it 'expects a new instance of Oystercard class to have a balance of 0' do
+      oystercard.touch_out
       expect(oystercard.balance).to eq(0)
     end
   end
 
   describe '#top_up' do
     it 'should update the balance with the specified top up amount' do
-      oystercard.top_up(1)
       expect(oystercard.balance).to eq(1)
     end
     it 'should raise an error if card limit (£90) is reached' do
@@ -23,8 +28,7 @@ describe Oystercard do
 
   describe '#deduct' do
     it 'should deduct the balance by the specified amount' do
-      oystercard.top_up(1)
-      oystercard.deduct(1)
+      oystercard.touch_out
       expect(oystercard.balance).to eq(0)
     end
   end
@@ -32,29 +36,31 @@ describe Oystercard do
   describe 'touch in/out' do
     describe '#in_journey?' do
       it 'should return false if not in journey' do
+        oystercard.touch_out
         expect(oystercard.in_journey?).to eq(false)
       end
     end
 
     describe '#touch_in' do
       it 'should return true if touched in' do
-        oystercard.top_up(1)
-        oystercard.touch_in
         expect(oystercard).to be_in_journey
       end
 
       it 'should raise and error if balance is less than mininum limit (£1)' do
         error_message = 'Insufficent funds, please top up'
+        oystercard.touch_out
         expect { oystercard.touch_in }.to raise_error(error_message)
       end
     end
 
     describe '#touch_out' do
       it 'should return false if touched out' do
-        oystercard.top_up(1)
-        oystercard.touch_in
         oystercard.touch_out
         expect(oystercard).not_to be_in_journey
+      end
+
+      it 'should charge the mininum fare on touch out' do
+        expect { oystercard.touch_out }.to change { oystercard.balance }.by(-1)
       end
     end
   end
