@@ -38,13 +38,20 @@ describe Oystercard do
 
     describe '#touch_in' do
       it 'should return true if touched in' do
+        oystercard.top_up(1)
         oystercard.touch_in
         expect(oystercard).to be_in_journey
+      end
+
+      it 'should raise and error if balance is less than mininum limit (£1)' do
+        error_message = 'Insufficent funds, please top up'
+        expect { oystercard.touch_in }.to raise_error(error_message)
       end
     end
 
     describe '#touch_out' do
       it 'should return false if touched out' do
+        oystercard.top_up(1)
         oystercard.touch_in
         oystercard.touch_out
         expect(oystercard).not_to be_in_journey
