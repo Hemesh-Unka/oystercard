@@ -35,14 +35,16 @@ describe Oystercard do
   end
 
   describe 'touch in/out' do
-    it 'should return false if not in journey' do
-      oystercard.touch_out
-      expect(oystercard.in_use).to eq(false)
+    describe '#in_journey?' do
+      it 'should return false if not in journey' do
+        oystercard.touch_out
+        expect(oystercard.in_journey?).to be_nil
+      end
     end
 
     describe '#touch_in' do
       it 'should return true if touched in' do
-        expect(oystercard.in_use).to eq true
+        expect(oystercard).to be_in_journey
       end
 
       it 'should log the entry station on touch in' do
@@ -59,7 +61,7 @@ describe Oystercard do
     describe '#touch_out' do
       it 'should return false if touched out' do
         oystercard.touch_out
-        expect(oystercard.in_use).to eq false
+        expect(oystercard).not_to be_in_journey
       end
 
       it 'should charge the mininum fare on touch out' do
