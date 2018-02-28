@@ -2,10 +2,11 @@ require 'oystercard'
 
 describe Oystercard do
   subject(:oystercard) { described_class.new }
+  let(:fake_station) { double('Liverpool Street') }
 
   before(:each) do
     oystercard.top_up(1)
-    oystercard.touch_in
+    oystercard.touch_in(fake_station)
   end
 
   describe 'balance' do
@@ -34,29 +35,31 @@ describe Oystercard do
   end
 
   describe 'touch in/out' do
-    describe '#in_journey?' do
-      it 'should return false if not in journey' do
-        oystercard.touch_out
-        expect(oystercard.in_journey?).to eq(false)
-      end
+    it 'should return false if not in journey' do
+      oystercard.touch_out
+      expect(oystercard.in_use).to eq(false)
     end
 
     describe '#touch_in' do
       it 'should return true if touched in' do
-        expect(oystercard).to be_in_journey
+        expect(oystercard.in_use).to eq true
+      end
+
+      it 'should log the entry station on touch in' do
+        expect(oystercard.entry_station).to eq fake_station
       end
 
       it 'should raise and error if balance is less than mininum limit (£1)' do
         error_message = 'Insufficent funds, please top up'
         oystercard.touch_out
-        expect { oystercard.touch_in }.to raise_error(error_message)
+        expect { oystercard.touch_in(fake_station) }.to raise_error(error_message)
       end
     end
 
     describe '#touch_out' do
       it 'should return false if touched out' do
         oystercard.touch_out
-        expect(oystercard).not_to be_in_journey
+        expect(oystercard.in_use).to eq false
       end
 
       it 'should charge the mininum fare on touch out' do
