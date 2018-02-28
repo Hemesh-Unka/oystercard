@@ -20,4 +20,12 @@ describe Oystercard do
       expect { oystercard.top_up(card_limit + 1) }.to raise_error(error_message)
     end
   end
+
+  describe '#deduct' do
+    it 'should deduct the balance by the specified amount' do
+      oystercard.top_up(1)
+      oystercard.deduct(1)
+      expect(oystercard.balance).to eq(0)
+    end
+  end
 end
