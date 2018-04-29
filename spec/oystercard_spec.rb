@@ -82,5 +82,5 @@ describe Oystercard do
   #   oyster.touch_out(fake_exit_station)
   #   expect(oyster.history).to eq [fake_journey]
   # end
-  # end
+  end
 end

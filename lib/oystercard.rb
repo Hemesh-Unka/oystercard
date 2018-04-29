@@ -24,6 +24,7 @@ class Oystercard
   def touch_in(station = Station.new(name, zone))
     raise 'Insufficent funds, please top up' if @balance < MININUM_BALANCE
 
+    # to clean
     if in_journey?
       deduct(@journey.fare)
       @history << @journey
